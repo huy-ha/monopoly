@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Monopoly</title>
+</head>
+<body>
+	<div id="text"></div>
+<script type="text/javascript">
+	/*random cube
+	look into creating a game class
+	player character + constructor,...
+	based on random cube, move
+	have hard coded property into map (as array)
+	*/
+	var text = document.getElementById("text");
+
+	function print(s){
+		text = s;
+	}
+
+	var map = [];
+
+	//creating map
+	map.push({
+		"name": "Tire Yard",
+		"price": 60,
+		"owner": undefined,
+		"rent": 2
+	});	
+
+	map.push({
+		"name": "Cletus' Shack",
+		"price": 60,
+		"owner": undefined,
+		"rent": 4
+	});	
+
+	map.push({
+		"name": "Herman's Military Antique",
+		"price": 100,
+		"owner": undefined,
+		"rent": 6
+	});	
+
+	map.push({
+		"name": "The Android's Dungeon",
+		"price": 100,
+		"owner": undefined,
+		"rent": 6
+	});	
+
+	map.push({
+		"name": "Kwik-E-Mart",
+		"price": 120,
+		"owner": undefined,
+		"rent": 8
+	});	
+	
+	map.push({
+		"name": "Moe's Bar",
+		"price": 140,
+		"owner": undefined,
+		"rent": 10
+	});	
+
+	map.push({
+		"name": "The Jazz Hole",
+		"price": 140,
+		"owner": undefined,
+		"rent": 10
+	});	
+	
+	map.push({
+		"name": "Disco Stu's",
+		"price": 160,
+		"owner": undefined,
+		"rent": 12
+	});	
+
+	function game(){
+		this.players = [];
+		let numberOfPlayers = prompt("How many players?");
+		for(let i = 1; i-1 < numberOfPlayers;i++){
+			let name = prompt("What is player " + i + "'s name?");
+			this.players.push(new player(name));
+		}
+	}
+
+	//print all data in game to console for debugging purposes
+	game.prototype.printGame = function() {
+		var result = "number of players = " + this.players.length;
+		for(let i = 1; i-1 < this.players.length; i++){
+			result += "  ";
+			result += "Player " + i + ":";
+			result += "name :" + this.players[i-1].name;
+			result += "money : " + this.players[i-1].money;
+			result += "position : " + this.players[i-1].position;
+		}
+		print(result);
+	}
+
+	game.prototype.play = function() {
+		while(this.players.length > 1){
+			for(let i = 0; i < this.players.length; i++){
+				this.players[i].move(this.players);
+				this.printGame();
+				if(this.players[i].money < 0){
+					players.splice(i,)
+				}
+			}
+		}
+		print("Congratulations to " + players[0] +  "! You won!");
+	};
+
+	function dice(){
+		return Math.ceil(Math.random()*6);
+	}
+
+	function mod(x,y){
+		return ((x%y)+y)%y;
+	}
+
+	function player(name){
+		this.name = name;
+		this.money = 500;
+		this.position = 0;
+	}
+
+	//called when player gains money
+	player.prototype.plus = function(amount){
+		this.money += amount;
+	}
+
+	//called when player loses money
+	player.prototype.minus = function(amount){
+		this.money -= amount;
+	}
+
+	//called when player loses money
+	player.prototype.move = function(players){
+		let firstDice = dice();
+		let secondDice = dice();
+		let currentMove = firstDice + secondDice;
+		alert(this.name + " rolled " + currentMove);
+		//ensure that move is within map
+		this.position = mod(this.position + currentMove,map.length);
+		if(map[this.position].owner===undefined){
+			//buy or not buy the land
+			if(confirm('Do you want to purchase '+ map[this.position].name +'?')){
+				console.log("purchased!");
+				map[this.position].owner = this.name;
+				this.minus(map[this.position].price);
+			}else{
+				console.log("passed!");
+			}
+		}else{
+			//pay the rent
+			var owner;
+			for(let i = 0; i < players.length; i++){
+				if(players[i].name===map[this.position].owner){
+					owner = players[i];
+					if(owner!==this){
+					alert(this.name + " landed in " + owner.name + "'s land, " + map[this.position].name);
+					this.minus(map[this.position].rent);
+					owner.plus(map[this.position].rent);
+					alert(this.name + " paided " + owner.name + " $" + map[this.position].rent + " in rent");
+					}
+				}
+			}
+			if(owner === undefined){
+				console.log("ERROR: can't find owner");
+			}
+		}
+	}
+
+	let currentGame = new game();
+	currentGame.play();
+</script>
+</body>
+</html>
